@@ -10,7 +10,7 @@ RIGHT_REFRESH_BUTTON_LABEL = "j_idt76"
 
 YEAR_STATE_MAPPING = {
     "2022" : [
-        "Andaman and Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
+        "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
         "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
         "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
         "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
@@ -25,7 +25,7 @@ YEAR_STATE_MAPPING = {
     ],
 
     # "2024" : [
-    #     "Andaman and Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
+    #     "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
     #     "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
     #     "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
     #     "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
@@ -36,7 +36,7 @@ YEAR_STATE_MAPPING = {
     # ],
 
     "2025" : [
-        "Andaman and Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
+        "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
         "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
         "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
         "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",

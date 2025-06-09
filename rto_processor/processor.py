@@ -471,6 +471,7 @@ class RTOProcessor:
             # Wait for download to complete
             while time.time() - start_time < timeout:
                 current_files = os.listdir(config.BASE_DOWNLOAD_DIR)
+                # log_message(f"Current files in BASE_DOWNLOAD_DIR: {current_files}")
                 
                 if any(f.endswith('.crdownload') for f in current_files):
                     time.sleep(1)
