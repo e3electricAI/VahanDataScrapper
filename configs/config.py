@@ -72,7 +72,7 @@ VEHICLE_CATEGORIES = TWO_WHEELER
 
 # CHROME OPTIONS
 CHROME_OPTIONS = [
-    "--start-maximized",
+    "--headless",
     "--no-sandbox",
     "--disable-dev-shm-usage",
     "--disable-notifications",
