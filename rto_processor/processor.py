@@ -492,13 +492,21 @@ class RTOProcessor:
                 return False
                 
             try:
-                # Ensure target directory exists
-                os.makedirs(target_dir, exist_ok=True)
-                log_message(f"Target directory verified/created: {target_dir}")
-                
-                # Create a unique filename with year if the target exists
-                base_name = f"{rto_name}.xlsx"
+                def sanitize_filename(filename):
+                    # Replace any character not in the allowed set with an underscore
+                    # Allowed: alphanumeric, spaces, dots, hyphens, and underscores
+                    return re.sub(r'[\\/*?:"<>|]', "_", filename)
+
+                # Sanitize the rto_name before using it in the filename
+                sanitized_rto_name = sanitize_filename(rto_name)
+                base_name = f"{sanitized_rto_name}.xlsx"
                 new_filepath = os.path.join(target_dir, base_name)
+                
+                # counter = 1
+                # while os.path.exists(new_filepath):
+                #     name, ext = os.path.splitext(base_name)
+                #     new_filepath = os.path.join(target_dir, f"{name}_{counter}{ext}")
+                #     counter += 1
                 
                 # If file exists, append a number to make it unique
                 # counter = 1

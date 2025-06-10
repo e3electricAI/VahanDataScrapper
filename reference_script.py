@@ -711,11 +711,16 @@ class RTOWiseProcessor:
                 os.makedirs(target_dir, exist_ok=True)
                 self.log_message(f"Target directory verified/created: {target_dir}")
                 
-                # Create a unique filename with year if the target exists
-                base_name = f"{rto_name}.xlsx"
+                def sanitize_filename(filename):
+                    # Replace any character not in the allowed set with an underscore
+                    # Allowed: alphanumeric, spaces, dots, hyphens, and underscores
+                    return re.sub(r'[\\/*?:"<>|]', "_", filename)
+
+                # Sanitize the rto_name before using it in the filename
+                sanitized_rto_name = sanitize_filename(rto_name)
+                base_name = f"{sanitized_rto_name}.xlsx"
                 new_filepath = os.path.join(target_dir, base_name)
                 
-                # If file exists, append a number to make it unique
                 counter = 1
                 while os.path.exists(new_filepath):
                     name, ext = os.path.splitext(base_name)
@@ -729,6 +734,8 @@ class RTOWiseProcessor:
                 if not os.path.exists(new_filepath):
                     self.log_message("Error: File move operation failed")
                     return False
+
+                return True
                     
                 # # Upload to S3 with the same directory structure as local
                 # # The target_dir is already in the format: base_download_dir/year/state_name
@@ -763,23 +770,48 @@ class RTOWiseProcessor:
         except Exception as e:
             self.log_message(f"Unexpected error in download wait: {str(e)}")
             return False
+
+    def handle_503_and_recover(self, state_name, year):
+        self.log_message("503 error detected. Waiting 15 minutes before retrying...")
+        time.sleep(900)
+        try:
+            self.driver.refresh()
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "[name='javax.faces.ViewState']"))
+            )
+            return self.process_rto_wise_data(state_name, year)
+        except Exception as e:
+            self.log_message(f"Failed to recover from 503: {str(e)}")
+            return False
     
     def process_rto_wise_data(self, state_name, year, specific_rtos=None):
         """Main function to process RTO-wise data for a state"""
         try:
             self.log_message(f"\n=== Starting RTO-wise processing for {state_name}, {year} ===")
             
+            if self.check_for_503_error():
+                if not self.handle_503_and_recover(state_name, year):
+                    return ["All RTOs (503 during setup_axis)"]
+                
             # Setup page
             if not self.setup_axis():
                 return False
             
             self.random_delay(1, 2)
 
+            if self.check_for_503_error():
+                if not self.handle_503_and_recover(state_name, year):
+                    return ["All RTOs (503 during state selection)"]
+
             # Select state
             if not self.select_state_primefaces(state_name):
                 return False
             
             self.random_delay(0, 1)
+            
+            if self.check_for_503_error():
+                if not self.handle_503_and_recover(state_name, year):
+                    return ["All RTOs (503 during year selection)"]
             
             # Select year
             if not self.select_year(year):
@@ -806,6 +838,11 @@ class RTOWiseProcessor:
                 self.log_message(f"\n--- Processing RTO: {rto} ---")
                 
                 try:
+
+                    if self.check_for_503_error():
+                        if not self.handle_503_and_recover(state_name, year):
+                            return ["All RTOs (503 before selecting the RTO)"]
+
                     # Select specific RTO
                     if not self.select_specific_rto(rto):
                         self.log_message(f"Failed to select RTO: {rto}")
@@ -813,6 +850,10 @@ class RTOWiseProcessor:
                         continue
                     
                     self.random_delay(0.5, 1)
+
+                    if self.check_for_503_error():
+                        if not self.handle_503_and_recover(state_name, year):
+                            return ["All RTOs (503 before applying filters)"]
 
                     # Apply ev filters
                     if not self.apply_filters():
@@ -858,28 +899,61 @@ class RTOWiseProcessor:
         except Exception as e:
             self.log_message(f"Error closing browser: {str(e)}")
 
+    def check_for_503_error(self):
+        """
+        Detects actual 503 Service Unavailable / Bad Gateway errors based on title or heading tags.
+        Returns True if detected, else False.
+        """
+        log_message("Checking for Badgateway (503) error")
+        
+        try:
+            title = self.driver.title.strip().lower()
+            source = self.driver.page_source.strip().lower()
+
+            # log_message(f"Page title: {title}")
+            # log_message(f"First 300 chars of page source: {source[:300]}")
+
+            # Check very specific patterns to avoid false triggers
+            if "503 service unavailable" in title or "bad gateway" in title:
+                return True
+
+            # Check HTML structure that typically appears in actual 503 pages
+            if (
+                "<h1>503" in source or
+                "<title>503 service unavailable" in source or
+                "<h1>bad gateway" in source or
+                "nginx" in source and "503" in source
+            ):
+                return True
+
+            return False
+        
+        except Exception as e:
+            self.log_message(f"Error during 503 detection: {str(e)}")
+            return False
+
 # Usage Example
 def main():
-    processor = RTOWiseProcessor(base_download_dir=os.path.join(os.getcwd(), f"ev_rto_wise"))
+    processor = RTOWiseProcessor(base_download_dir=os.path.join(os.getcwd(), f"rto_wise_data"))
     
     try:
         # Configuration
         state_year_mapping = {
-            # "2022" : [
-            #     "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
-            #     "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
-            #     "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
-            #     "Nagaland(9)", "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
-            #     "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
-            #     "UT of DNH and DD(3)", "West Bengal(57)"
-            # ],    
+            "2022" : [
+                "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
+                "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
+                "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
+                "Nagaland(9)", "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
+                "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
+                "UT of DNH and DD(3)", "West Bengal(57)"
+            ],    
 
             "2023" : [
                 "Haryana(98)", "Tamil Nadu(148)"
             ],
 
             # "2024" : [
-            #     "Andaman and Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
+            #     "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
             #     "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
             #     "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
             #     "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
@@ -889,16 +963,16 @@ def main():
             #     "UT of DNH and DD(3)", "West Bengal(57)"
             # ],
 
-            # "2025" : [
-            #     "Andaman and Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
-            #     "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
-            #     "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
-            #     "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
-            #     "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
-            #     "Nagaland(9)", "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
-            #     "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
-            #     "UT of DNH and DD(3)", "West Bengal(57)"
-            # ]
+            "2025" : [
+                "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
+                "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
+                "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
+                "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
+                "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
+                "Nagaland(9)", "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
+                "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
+                "UT of DNH and DD(3)", "West Bengal(57)"
+            ]
         }
 
         for year in state_year_mapping:
