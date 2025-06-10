@@ -10,8 +10,7 @@ RIGHT_REFRESH_BUTTON_LABEL = "j_idt65"
 
 YEAR_STATE_MAPPING = {
     "2022" : [
-        "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
-        "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
+        "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
         "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
         "Nagaland(9)", "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
         "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
