@@ -17,7 +17,7 @@ YEAR_STATE_MAPPING = {
     # ],    
 
     "2023" : [
-        "Odisha(39)", "Puducherry(8)", "Punjab(96)", "Rajasthan(59)",
+        "Rajasthan(59)",
         "Sikkim(9)", "Tamil Nadu(148)", "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
         "UT of DNH and DD(3)", "West Bengal(57)"
     ],
