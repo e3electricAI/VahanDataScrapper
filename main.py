@@ -2,22 +2,19 @@ import logging
 from rto_processor.processor import RTOProcessor
 from rto_processor.browser import Browser
 from rto_processor.utils import *
-from configs import config
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
+from configs import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 def main():
     try:
-        # Initialize browser and processor
-        browser = Browser()
-        processor = RTOProcessor(browser)
-        
         # Start the scraping process
-        start_scrapper(processor)
+        start_scrapper()
         
     except Exception as e:
         logger.error(f"Error in main: {str(e)}", exc_info=True)
@@ -30,16 +27,28 @@ def main():
         except Exception as e:
             logger.error(f"Error while closing browser: {str(e)}")
 
-def start_scrapper(processor):
+def start_scrapper():
     """Main function to start the RTO data scraping process."""
     try:
+        browser = Browser()
+        processor = RTOProcessor(browser)
         log_message("\n=== Starting RTO-wise processing ===")
         year_state_mapping = config.YEAR_STATE_MAPPING
         
         # Track failed processes
         failed_processes = []
         
+        # Save the original download directory
+        # original_download_dir = config.BASE_DOWNLOAD_DIR
+        
         for year, states in year_state_mapping.items():
+            # Create year-specific download directory
+            # year_download_dir = os.path.join(original_download_dir, str(year))
+            # os.makedirs(year_download_dir, exist_ok=True)
+            
+            # Update the download directory in the browser
+            # browser.update_download_directory(year_download_dir)
+
             for state in states:
                 log_message(f"\nProcessing state: {state}, Year: {year}")
                 

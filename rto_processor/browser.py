@@ -42,6 +42,30 @@ class Browser:
             log_message(f"Error loading page: {str(e)}")
             raise
 
+    def update_download_directory(self, download_dir):
+        """
+        Update the download directory for the browser
+        
+        Args:
+            download_dir (str): Path to the new download directory
+        """
+        try:
+            # Update the config
+            config.BASE_DOWNLOAD_DIR = download_dir
+            
+            # Update Chrome preferences
+            self.driver.execute_cdp_cmd(
+                'Page.setDownloadBehavior',
+                {
+                    'behavior': 'allow',
+                    'downloadPath': download_dir
+                }
+            )
+            log_message(f"Download directory updated to: {download_dir}")
+        except Exception as e:
+            log_message(f"Error updating download directory: {str(e)}")
+            raise
+
     def close(self):
         """Close the browser"""
         try:
