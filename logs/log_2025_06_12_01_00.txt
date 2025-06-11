@@ -1,0 +1,86 @@
+[2025-06-12 01:00:20] Loading page
+[2025-06-12 01:00:22] Page loaded
+[2025-06-12 01:00:22] 
+=== Starting RTO-wise processing ===
+[2025-06-12 01:00:22] 
+Processing state: Uttar Pradesh(77), Year: 2022
+[2025-06-12 01:00:22] 
+=== Starting RTO-wise processing for Uttar Pradesh(77), 2022 ===
+[2025-06-12 01:00:22] Checking for Badgateway (503) error
+[2025-06-12 01:00:22] Setting up X-axis (Month Wise) and Y-axis (Maker)...
+[2025-06-12 01:00:23] Clicked Y-axis dropdown using method 1
+[2025-06-12 01:00:24] Clicked Maker option using method 1
+[2025-06-12 01:00:25] Clicked X-axis dropdown using method 1
+[2025-06-12 01:00:26] Clicked Month Wise option using method 1
+[2025-06-12 01:00:27] Axis setup completed
+[2025-06-12 01:00:27] Checking for Badgateway (503) error
+[2025-06-12 01:00:27] Selecting State: Uttar Pradesh(77)
+[2025-06-12 01:00:27] Clicked state dropdown label using method 1
+[2025-06-12 01:00:28] Clicked state option: Uttar Pradesh(77) using method 1
+[2025-06-12 01:00:29] Successfully selected state: Uttar Pradesh(77)
+[2025-06-12 01:00:29] Checking for Badgateway (503) error
+[2025-06-12 01:00:29] Selecting Year: 2022
+[2025-06-12 01:00:30] Clicked year dropdown using method 1
+[2025-06-12 01:00:31] Clicked year option: 2022 using method 1
+[2025-06-12 01:00:31] Successfully selected year: 2022
+[2025-06-12 01:00:31] Checking for Badgateway (503) error
+[2025-06-12 01:00:31] Getting list of all RTOs for the selected state
+[2025-06-12 01:00:31] Clicked RTO dropdown label using method 1
+[2025-06-12 01:00:33] Found 78 RTOs for the state
+[2025-06-12 01:00:33] 
+Processing RTO: Agra RTO - UP80( 23-NOV-2017 ) (Attempt 1)
+[2025-06-12 01:00:33] Checking for Badgateway (503) error
+[2025-06-12 01:00:33] Selecting RTO: Agra RTO - UP80( 23-NOV-2017 )
+[2025-06-12 01:00:33] Clicked RTO dropdown using method 1
+[2025-06-12 01:00:34] Clicked RTO option: Agra RTO - UP80( 23-NOV-2017 ) using method 1
+[2025-06-12 01:00:34] Successfully selected RTO: Agra RTO - UP80( 23-NOV-2017 )
+[2025-06-12 01:00:34] Checking for Badgateway (503) error
+[2025-06-12 01:00:34] Applying left panel filters
+[2025-06-12 01:00:35] Clicked right refresh button using method 1
+[2025-06-12 01:00:40] Opening left panel if needed
+[2025-06-12 01:00:40] Clicked left panel toggler using method 1
+[2025-06-12 01:00:40] Expanded left panel
+[2025-06-12 01:00:42] Selecting vehicle categories and fuel types
+[2025-06-12 01:00:42] Clicked checkbox VhCatg:0 using method 2
+[2025-06-12 01:00:43] Clicked checkbox VhCatg:1 using method 2
+[2025-06-12 01:00:43] Clicked checkbox VhCatg:2 using method 2
+[2025-06-12 01:00:44] Clicked checkbox fuel:7 using method 2
+[2025-06-12 01:00:45] Clicked checkbox fuel:21 using method 2
+[2025-06-12 01:00:45] Vehicle categories and fuel types selected
+[2025-06-12 01:00:46] Clicking left refresh button
+[2025-06-12 01:00:46] Clicked left refresh button using method 1
+[2025-06-12 01:00:46] Left refresh button clicked
+[2025-06-12 01:00:51] Left panel collapsed successfully.
+[2025-06-12 01:00:51] Checking for Badgateway (503) error
+[2025-06-12 01:00:51] Downloading Excel file for Uttar Pradesh(77), Agra RTO - UP80( 23-NOV-2017 ), 2022
+[2025-06-12 01:00:51] Clicked Excel download button using method 1
+[2025-06-12 01:00:51] Clicked Excel download button
+[2025-06-12 01:00:55] BASE_DOWNLOAD_DIR being checked: C:\Users\Siddham Jain\Downloads\VahanGemini\rto_wise_data
+[2025-06-12 01:00:55] Inside_wait_for_download_and_rename for Uttar_Pradesh
+[2025-06-12 01:01:55] Moving file from C:\Users\Siddham Jain\Downloads\VahanGemini\rto_wise_data\reportTable.xlsx to C:\Users\Siddham Jain\Downloads\VahanGemini\rto_wise_data\2022\Uttar Pradesh(77)\Agra RTO - UP80( 23-NOV-2017 ).xlsx
+[2025-06-12 01:01:55] Successfully processed RTO: Agra RTO - UP80( 23-NOV-2017 )
+[2025-06-12 01:01:59] 
+Processing RTO: AKBARPUR(AMBEDKAR NAGAR) - UP45( 27-DEC-2017 ) (Attempt 1)
+[2025-06-12 01:01:59] Checking for Badgateway (503) error
+[2025-06-12 01:01:59] Selecting RTO: AKBARPUR(AMBEDKAR NAGAR) - UP45( 27-DEC-2017 )
+[2025-06-12 01:02:00] Clicked RTO dropdown using method 1
+[2025-06-12 01:02:01] Clicked RTO option: AKBARPUR(AMBEDKAR NAGAR) - UP45( 27-DEC-2017 ) using method 1
+[2025-06-12 01:02:01] Successfully selected RTO: AKBARPUR(AMBEDKAR NAGAR) - UP45( 27-DEC-2017 )
+[2025-06-12 01:02:01] Checking for Badgateway (503) error
+[2025-06-12 01:02:01] Applying left panel filters
+[2025-06-12 01:02:01] Clicked right refresh button using method 1
+[2025-06-12 01:02:05] Opening left panel if needed
+[2025-06-12 01:02:05] Clicked left panel toggler using method 1
+[2025-06-12 01:02:05] Expanded left panel
+[2025-06-12 01:02:07] Selecting vehicle categories and fuel types
+[2025-06-12 01:02:09] Vehicle categories and fuel types selected
+[2025-06-12 01:02:10] Clicking left refresh button
+[2025-06-12 01:02:10] Clicked left refresh button using method 1
+[2025-06-12 01:02:10] Left refresh button clicked
+[2025-06-12 01:02:15] Left panel collapsed successfully.
+[2025-06-12 01:02:15] Checking for Badgateway (503) error
+[2025-06-12 01:02:15] Downloading Excel file for Uttar Pradesh(77), AKBARPUR(AMBEDKAR NAGAR) - UP45( 27-DEC-2017 ), 2022
+[2025-06-12 01:02:16] Clicked Excel download button using method 1
+[2025-06-12 01:02:16] Clicked Excel download button
+[2025-06-12 01:02:19] BASE_DOWNLOAD_DIR being checked: C:\Users\Siddham Jain\Downloads\VahanGemini\rto_wise_data
+[2025-06-12 01:02:19] Inside_wait_for_download_and_rename for Uttar_Pradesh
