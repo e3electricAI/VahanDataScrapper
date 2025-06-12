@@ -91,127 +91,169 @@ def handle_503_and_recover(processor, retry_delay=900):
         log_message(f"Failed to recover after 503: {str(e)}")
         return False
 
-
-def process_rto_wise_data(processor, state_name, year, specific_rtos=None):
+def process_rto_wise_data(processor, state_name, year, specific_rtos=None, start_rto_index=0):
     """
-    Process RTO-wise data for a given state and year.
-
-    Args:
-        processor: RTOProcessor instance
-        state_name: Name of the state to process
-        year: Year to process data for
-        specific_rtos: Optional list of specific RTOs to process (for retries)
-
-    Returns:
-        list: List of RTOs that failed to process
+    Main function to process RTO-wise data with resume capability
     """
-    failed_rtos = []
-
-    def handle_503_and_recover():
-        log_message("503 error detected. Waiting 15 minutes before retrying...")
-        time.sleep(900)
-        try:
-            processor.browser.driver.refresh()
-            WebDriverWait(processor.browser.driver, 30).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "[name='javax.faces.ViewState']"))
-            )
-            return processor.setup_axis()
-        except Exception as e:
-            log_message(f"Failed to recover from 503: {str(e)}")
-            return False
-
     try:
-        log_message(f"\n=== Starting RTO-wise processing for {state_name}, {year} ===")
+        log_message(f"\n=== Starting RTO-wise processing for {state_name}, {year} ===\n")
+        
+        # Process the state with RTO processing
+        failed_rtos = process_state(processor, state_name, year, start_rto_index, specific_rtos)
+        
+        log_message(f"\n=== Processing completed for {state_name} ===\n")
+        log_message(f"Successfully processed: {len(rto_list) - len(failed_rtos)}/{len(rto_list)} RTOs")
+        log_message(f"Failed RTOs: {failed_rtos if failed_rtos else 'None'}")
+        
+        return failed_rtos
+        
+    except Exception as e:
+        log_message(f"Unexpected error in process_rto_wise_data: {str(e)}", exc_info=True)
+        return ["All RTOs (unexpected error)"]
 
-        # Setup axis configuration
-        if processor.check_for_503_error():
-            if not handle_503_and_recover():
-                return ["All RTOs (503 during setup_axis)"]
+def process_state(processor, state_name, year, start_rto_index=0, specific_rtos=None):
+    """
+    Process a single state with RTO processing resumption
+    """
+    # 1. Configure the state (axis, state, year)
+    rto_list = configure_state(processor, state_name, year, specific_rtos)
+    if not rto_list:
+        return ["All RTOs (configuration failed)"]
+    
+    # 2. Process RTOs starting from the given index
+    failed_rtos = process_rtos(processor, state_name, year, rto_list, start_rto_index)
+    return failed_rtos
 
+def configure_state(processor, state_name, year, specific_rtos=None):
+    """
+    Configure the state (axis, state, year) and return RTO list
+    Returns None if configuration fails
+    """
+    try:
+        # Setup axis
         if not processor.setup_axis():
             log_message("Failed to setup axis configuration")
-            return ["All RTOs (axis setup failed)"]
+            return None
 
-        if processor.check_for_503_error():
-            if not handle_503_and_recover():
-                return ["All RTOs (503 after axis setup)"]
-
+        # Select state
         if not processor.select_state_primefaces(state_name):
             log_message(f"Failed to select state: {state_name}")
-            return ["All RTOs (state selection failed)"]
+            return None
 
-        if processor.check_for_503_error():
-            if not handle_503_and_recover():
-                return ["All RTOs (503 after state selection)"]
-
+        # Select year
         if not processor.select_year(year):
             log_message(f"Failed to select year: {year}")
-            return ["All RTOs (year selection failed)"]
+            return None
 
-        if processor.check_for_503_error():
-            if not handle_503_and_recover():
-                return ["All RTOs (503 after year selection)"]
-
+        # Get RTO list if not provided
         rto_list = specific_rtos or processor.get_all_rtos_for_state()
         if not rto_list:
             log_message("No RTOs found for the selected state")
-            return ["All RTOs (no RTOs found)"]
+            return None
 
-        for rto in rto_list:
-            success = False
-            retry_attempts = 2
-
-            for attempt in range(retry_attempts):
-                try:
-                    log_message(f"\nProcessing RTO: {rto} (Attempt {attempt + 1})")
-
-                    if processor.check_for_503_error():
-                        if not handle_503_and_recover():
-                            failed_rtos.append(rto)
-                            break
-                        continue
-
-                    if not processor.select_specific_rto(rto):
-                        raise Exception("RTO selection failed")
-
-                    if processor.check_for_503_error():
-                        if not handle_503_and_recover():
-                            failed_rtos.append(rto)
-                            break
-                        continue
-
-                    if not processor.apply_filters():
-                        raise Exception("Filter application failed")
-
-                    if processor.check_for_503_error():
-                        if not handle_503_and_recover():
-                            failed_rtos.append(rto)
-                            break
-                        continue
-
-                    if not processor.download_excel_rto(state_name, year, rto):
-                        raise Exception("Download failed")
-
-                    log_message(f"Successfully processed RTO: {rto}")
-                    success = True
-                    break
-
-                except Exception as e:
-                    log_message(f"Error processing RTO {rto}: {str(e)}")
-                    if processor.check_for_503_error():
-                        if not handle_503_and_recover():
-                            break
-
-            if not success:
-                failed_rtos.append(rto)
-
-            random_delay(2, 5)  # Delay between RTOs
-
-        return failed_rtos
+        return rto_list
 
     except Exception as e:
-        log_message(f"Error in process_rto_wise_data: {str(e)}", exc_info=True)
-        return ["All RTOs (unexpected error)"]
+        log_message(f"Error in configure_state: {str(e)}")
+        return None
+
+def process_rtos(processor, state_name, year, rto_list, start_index=0):
+    """
+    Process RTOs starting from the given index
+    Returns list of failed RTOs
+    """
+    failed_rtos = []
     
+    for index in range(start_index, len(rto_list)):
+        rto = rto_list[index]
+        success = False
+        max_attempts = 2
+        
+        for attempt in range(max_attempts):
+            try:
+                log_message(f"\nProcessing RTO {index + 1}/{len(rto_list)}: {rto} (Attempt {attempt + 1}/{max_attempts})")
+                
+                # Try to process the current RTO
+                if process_single_rto(processor, state_name, year, rto):
+                    success = True
+                    break
+                
+                # If we get here, processing failed
+                log_message(f"Attempt {attempt + 1} failed for RTO: {rto}")
+                
+                # On last attempt, add to failed list
+                if attempt == max_attempts - 1:
+                    failed_rtos.append(rto)
+                    log_message(f"Max attempts reached for RTO: {rto}")
+                    break
+                    
+                # Otherwise, try to recover
+                log_message("Attempting to recover...")
+                if not recover_state(processor, state_name, year):
+                    log_message("Recovery failed, marking RTO as failed")
+                    failed_rtos.append(rto)
+                    break
+                    
+            except Exception as e:
+                log_message(f"Unexpected error processing RTO {rto}: {str(e)}")
+                if attempt == max_attempts - 1:
+                    failed_rtos.append(rto)
+                if not recover_state(processor, state_name, year):
+                    break
+    
+    return failed_rtos
+
+def process_single_rto(processor, state_name, year, rto):
+    """Process a single RTO with the given configuration"""
+    try:
+        # Select RTO
+        if not processor.select_specific_rto(rto, state_name, year):
+            log_message(f"Failed to select RTO: {rto}")
+            return False
+            
+        # Apply filters
+        if not processor.apply_filters():
+            log_message("Failed to apply filters")
+            return False
+            
+        # Download Excel
+        if not processor.download_excel_rto(state_name, year, rto):
+            log_message("Failed to download Excel")
+            return False
+            
+        log_message(f"Successfully processed RTO: {rto}")
+        return True
+        
+    except Exception as e:
+        log_message(f"Error in process_single_rto: {str(e)}")
+        return False
+
+def recover_state(processor, state_name, year):
+    """Recover the state by reinitializing the flow"""
+    try:
+        log_message("Attempting to recover state...")
+        
+        # Refresh the browser
+        processor.browser.driver.refresh()
+        
+        # Wait for page to load
+        WebDriverWait(processor.browser.driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "[name='javax.faces.ViewState']"))
+        )
+        
+        # Reinitialize the flow
+        if not processor.setup_axis() or \
+           not processor.select_state_primefaces(state_name) or \
+           not processor.select_year(year):
+            log_message("Failed to reinitialize flow after refresh")
+            return False
+            
+        log_message("Successfully recovered state")
+        return True
+        
+    except Exception as e:
+        log_message(f"Error in recover_state: {str(e)}")
+        return False
+
 if __name__ == "__main__":
     main()
