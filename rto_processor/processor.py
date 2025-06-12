@@ -112,14 +112,18 @@ class RTOProcessor:
             log_message(f"Error in get_all_rtos_for_state: {str(e)}")
             return []
 
-    def select_specific_rto(self, rto_name):
-        """Select a specific RTO from dropdown"""
+    def select_specific_rto(self, rto_name, state_name, year):
+        """
+        Select a specific RTO from dropdown
+        Returns True if successful, False otherwise
+        """
         try:
             log_message(f"Selecting RTO: {rto_name}")
             
             # Open RTO dropdown
             rto_dropdown_label = self.wait_and_find_element(By.ID, "selectedRto_label", 10, "RTO dropdown")
             if not rto_dropdown_label:
+                log_message("Could not find RTO dropdown")
                 return False
             
             self.smart_click(rto_dropdown_label, "RTO dropdown")
@@ -129,17 +133,25 @@ class RTOProcessor:
             rto_xpath = f"//li[normalize-space(text())='{rto_name}']"
             rto_option = self.wait_and_find_element(By.XPATH, rto_xpath, 5, f"RTO option: {rto_name}")
             
-            if rto_option:
-                self.smart_click(rto_option, f"RTO option: {rto_name}")
-                log_message(f"Successfully selected RTO: {rto_name}")
-                return True
-            else:
+            if not rto_option:
                 log_message(f"Could not find RTO: {rto_name}")
                 return False
                 
+            self.smart_click(rto_option, f"RTO option: {rto_name}")
+            
+            # Verify selection
+            selected_rto = self.wait_and_find_element(By.ID, "selectedRto_label", 5, "selected RTO text")
+            if not selected_rto or rto_name not in selected_rto.text:
+                log_message("RTO selection verification failed")
+                return False
+                
+            log_message(f"Successfully selected RTO: {rto_name}")
+            return True
+            
         except Exception as e:
-            log_message(f"Error selecting RTO {rto_name}: {str(e)}")
+            log_message(f"Error in select_specific_rto: {str(e)}")
             return False
+
 
     def smart_click(self, element, element_name="element"):
         """Try multiple click methods until one works"""
@@ -440,6 +452,8 @@ class RTOProcessor:
             import traceback
             log_message(f"Traceback: {traceback.format_exc()}")
             return 
+
+    
             
     def wait_for_download_and_rename(self, target_dir, state_name, rto_name):
         """
