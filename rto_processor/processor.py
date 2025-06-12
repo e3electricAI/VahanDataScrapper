@@ -439,7 +439,7 @@ class RTOProcessor:
             safe_rto_name = re.sub(r'\s*\(\d{2}-[A-Z]{3}-\d{4}\)\s*$', '', rto_name).strip()
             
             # Create year-wise directory structure: base_dir/year/state_name
-            target_dir = os.path.join(config.BASE_DOWNLOAD_DIR, str(year), state_name)
+            target_dir = os.path.join(config.BASE_DOWNLOAD_DIR, state_name)
             random_delay(3, 4)
             os.makedirs(target_dir, exist_ok=True)
             

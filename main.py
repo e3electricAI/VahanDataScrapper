@@ -43,11 +43,9 @@ def start_scrapper():
         
         for year, states in year_state_mapping.items():
             # Create year-specific download directory
-            # year_download_dir = os.path.join(original_download_dir, str(year))
-            # os.makedirs(year_download_dir, exist_ok=True)
-            
-            # Update the download directory in the browser
-            # browser.update_download_directory(year_download_dir)
+            year_download_dir = os.path.join(config.BASE_DOWNLOAD_DIR, str(year))
+            os.makedirs(year_download_dir, exist_ok=True)
+            browser.update_download_directory(year_download_dir)
 
             for state in states:
                 log_message(f"\nProcessing state: {state}, Year: {year}")
