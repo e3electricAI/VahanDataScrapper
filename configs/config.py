@@ -4,12 +4,9 @@ BASE_DOWNLOAD_DIR = os.path.join(os.getcwd(), "rto_wise_data")
 BASE_URL = "https://vahan.parivahan.gov.in/vahan4dashboard/vahan/view/reportview.xhtml"
 
 # Needs to be changed everyday
-STATE_DROPDOWN_LABEL = 'j_idt36_label'
-LEFT_REFRESH_BUTTON_LABEL = "j_idt72"
-RIGHT_REFRESH_BUTTON_LABEL = "j_idt67"
-STATE_DROPDOWN_LABEL = 'j_idt36_label'
-LEFT_REFRESH_BUTTON_LABEL = "j_idt72"
-RIGHT_REFRESH_BUTTON_LABEL = "j_idt67"
+STATE_DROPDOWN_LABEL = 'j_idt32_label'
+LEFT_REFRESH_BUTTON_LABEL = "j_idt67"
+RIGHT_REFRESH_BUTTON_LABEL = "j_idt62"
 
 YEAR_STATE_MAPPING = {
     # "2022" : [
@@ -22,12 +19,12 @@ YEAR_STATE_MAPPING = {
     # # ],
 
     "2024" : [
-        "Tamil Nadu(148)", "Karnataka(68)"
+        "Karnataka(68)"
     ],
 
     # "2025" : [
     #     "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
-    #     "Assam(33)", "Bihar(48)", "Chhattisgarh(31)", "Delhi(16)",
+    #     "Assam(33)", "Bihar(48)", "Chandigarh(1)", "Chhattisgarh(31)", "Delhi(16)",
     #     "Goa(13)", "Gujarat(37)", "Haryana(98)", "Himachal Pradesh(96)", "Jammu and Kashmir(21)",
     #     "Jharkhand(25)", "Karnataka(68)", "Kerala(87)", "Ladakh(3)", "Lakshadweep(5)",
     #     "Madhya Pradesh(53)", "Maharashtra(57)", "Manipur(13)", "Meghalaya(13)", "Mizoram(10)",
