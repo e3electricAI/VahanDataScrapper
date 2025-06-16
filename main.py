@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import json
 from configs import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -67,6 +68,8 @@ def start_scrapper():
                 log_message(f"Failed to process {len(process['failed_rtos'])} RTOs in {process['state']} ({process['year']}):")
                 for rto in process['failed_rtos']:
                     log_message(f"  - {rto}")
+            with open("failed_processes.json", "w") as f:
+                json.dump(failed_processes, f, indent=4)
         else:
             log_message("\n=== All RTOs processed successfully ===")
             
