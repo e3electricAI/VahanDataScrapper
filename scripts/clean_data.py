@@ -57,9 +57,11 @@ if __name__ == "__main__":
             
         print(f"\nProcessing year: {year}")
         
-        # Set available months based on year
         available_months = month_cols_full[:5] if year == '2025' else month_cols_full
-        
+
+        # DEBUG: Print all folders in the year directory
+        print(f"Files found in year {year}: {os.listdir(year_path)}")
+
         # Process each state
         for state_folder in os.listdir(year_path):
             state_path = os.path.join(year_path, state_folder)
