@@ -13,14 +13,15 @@ YEAR_STATE_MAPPING = {
     #     "UT of DNH and DD(3)"
     # ],    
 
-    # # "2023" : [
-    # #     "Tripura(9)", "Uttarakhand(21)", "Uttar Pradesh(77)",
-    # #     "UT of DNH and DD(3)", "West Bengal(57)", "Tamil Nadu(148)"
-    # # ],
-
-    "2024" : [
-        "Karnataka(68)"
+    "2023" : [
+        "Andhra Pradesh(83)", "Assam(33)", "Bihar(48)", "Chhattisgarh(31)",
+        "Delhi(16)", "Goa(13)", "Madhya Pradesh(53)", "Maharashtra(57)", 
+        "Rajasthan(59)", "Tamil Nadu(148)"
     ],
+
+    # "2024" : [
+    #     "Karnataka(68)"
+    # ],
 
     # "2025" : [
     #     "Andaman & Nicobar Island(3)", "Andhra Pradesh(83)", "Arunachal Pradesh(29)",
