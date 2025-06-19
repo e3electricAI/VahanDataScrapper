@@ -50,7 +50,7 @@ if __name__ == "__main__":
     output_base_path = "./cleaned_rto_wise_data"
     os.makedirs(output_base_path, exist_ok=True)
 
-    for year in ["2024"]:
+    for year in ["2023"]:
         year_path = os.path.join(base_folder_path, str(year))
         if not os.path.isdir(year_path):
             continue

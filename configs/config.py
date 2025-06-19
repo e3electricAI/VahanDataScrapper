@@ -4,9 +4,9 @@ BASE_DOWNLOAD_DIR = os.path.join(os.getcwd(), "rto_wise_data")
 BASE_URL = "https://vahan.parivahan.gov.in/vahan4dashboard/vahan/view/reportview.xhtml"
 
 # Needs to be changed everyday
-STATE_DROPDOWN_LABEL = 'j_idt32_label'
-LEFT_REFRESH_BUTTON_LABEL = "j_idt67"
-RIGHT_REFRESH_BUTTON_LABEL = "j_idt62"
+STATE_DROPDOWN_LABEL = 'j_idt41_label'
+LEFT_REFRESH_BUTTON_LABEL = "j_idt77"
+RIGHT_REFRESH_BUTTON_LABEL = "j_idt72"
 
 YEAR_STATE_MAPPING = {
     # "2022" : [

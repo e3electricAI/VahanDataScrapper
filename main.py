@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import json
 from configs import config
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -67,6 +68,8 @@ def start_scrapper():
                 log_message(f"Failed to process {len(process['failed_rtos'])} RTOs in {process['state']} ({process['year']}):")
                 for rto in process['failed_rtos']:
                     log_message(f"  - {rto}")
+            with open("failed_processes.json", "w") as f:
+                json.dump(failed_processes, f, indent=4)
         else:
             log_message("\n=== All RTOs processed successfully ===")
             
@@ -109,13 +112,12 @@ def process_rto_wise_data(processor, state_name, year, specific_rtos=None, start
         failed_rtos = process_state(processor, state_name, year, start_rto_index, specific_rtos)
         
         log_message(f"\n=== Processing completed for {state_name} ===\n")
-        log_message(f"Successfully processed: {len(rto_list) - len(failed_rtos)}/{len(rto_list)} RTOs")
         log_message(f"Failed RTOs: {failed_rtos if failed_rtos else 'None'}")
         
         return failed_rtos
         
     except Exception as e:
-        log_message(f"Unexpected error in process_rto_wise_data: {str(e)}", exc_info=True)
+        log_message(f"Unexpected error in process_rto_wise_data: {str(e)}")
         return ["All RTOs (unexpected error)"]
 
 def process_state(processor, state_name, year, start_rto_index=0, specific_rtos=None):
@@ -129,6 +131,9 @@ def process_state(processor, state_name, year, start_rto_index=0, specific_rtos=
     
     # 2. Process RTOs starting from the given index
     failed_rtos = process_rtos(processor, state_name, year, rto_list, start_rto_index)
+
+    log_message(f"Successfully processed: {len(rto_list) - len(failed_rtos)}/{len(rto_list)} RTOs")
+    
     return failed_rtos
 
 def configure_state(processor, state_name, year, specific_rtos=None):
